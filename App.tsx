@@ -1,7 +1,7 @@
 import axios from "axios";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
-import { Button, StyleSheet, Text, View, FlatList ,Image} from "react-native";
+import { Button, StyleSheet, Text, View, FlatList ,Image, Alert} from "react-native";
 
 export default function App() {
   const [bookList, setBookList] = useState([]);
@@ -9,18 +9,39 @@ export default function App() {
   const endpointURL = "https://69a82b1c37caab4b8c60f5b8.mockapi.io/books";
 
   const getListOfBooks = async () => {
-    const response = await axios.get(endpointURL);
-
+    try{
+        const response = await axios.get(endpointURL);
     setBookList(response.data);
+    }catch(error){
+      console.log(error)
+    }
   };
 
-  console.log(bookList);
+  const getBookByID = async() =>{
+    try{
+      const response = await axios.get(`${endpointURL}/40`);
+    console.log(response.data)
+    }catch(error){
+      console.log("An Error Occurred.",error)
+    }
+  }
+
+  const deleteBookById = async () =>{
+    try{
+      const response = await axios.delete(`${endpointURL}/24`)
+      Alert.alert("Book is Deleted Successfully.")
+    }catch(error){
+      console.log("An Error Occurred.",error)
+    }
+  }
 
   return (
     <View style={styles.container}>
       <Text>Hello World.</Text>
       <StatusBar style="auto" />
       <Button onPress={getListOfBooks} title="Get list of books" />
+      <Button onPress={getBookByID} title="Get Book By ID"/>
+      <Button onPress={deleteBookById} title="Delete Book"/>
       <FlatList
         data={bookList}
         keyExtractor={(item) => item.id}
